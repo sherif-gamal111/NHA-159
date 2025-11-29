@@ -1,154 +1,127 @@
-# NHA-159
+# NHA‑159 — Real‑Time Traffic Data Engineering Project 🚦
 
-# 🚦 Real-Time Traffic Data Engineering Project   
+## 🚀 Project Overview  
+This project ingests, processes, and transforms UK traffic data into a clean, analytics‑ready data warehouse following a **Bronze → Silver → Gold** multi‑layered architecture. The resulting data model supports downstream reporting and visualization using tools like Power BI — making insights from raw traffic data accessible to analysts and decision‑makers.  
 
-## 📚 Table of Contents
-- [🧩 Overview](#-overview)
-- [🏗️ Architecture](#-architecture)
-- [🧱 Data Model (Silver Layer)](#-data-model-silver-layer)
-- [🔗 Relationships (Star Schema)](#-relationships-star-schema)
-- [🧹 Data Cleaning Highlights](#-data-cleaning-highlights)
-- [⚙️ Tools and Technologies](#️-tools-and-technologies)
-- [🚀 Project Workflow](#-project-workflow)
-- [📊 Star Schema Diagram](#-star-schema-diagram)
-- [📂 Scripts](#-scripts)
-- [🖼 Assets](#-assets)
-- [🧠 Key Learnings](#-key-learnings)
-- [👥 Contributors](#-contributors)
-- [🏁 Next Steps](#-next-steps)
+Key strengths & deliverables:  
+- Full end-to-end data pipeline: raw ingestion, cleaning, schema design, and loading.  
+- Star schema modeling for efficient querying and reporting.  
+- Clean, surrogate‑keyed data with enforced referential integrity and data type validation.  
+- A reproducible workflow that’s easy to understand and extend.  
 
 ---
 
-## 🧩 Overview
+## 📁 Repository Structure  
+```
+NHA-159/
+│
+├── Data Warehouse/ — SQL schema and data warehouse artifacts
+├── Data Sets/ — Raw and intermediate datasets (raw, cleaned CSVs, etc.)
+├── Data Analysis/ — Notebooks & scripts for data profiling, cleaning, transformation
+├── Scripts.zip — Backup of cleaning or ETL scripts
+├── Assets.zip — Architecture diagrams, data model visuals, star‑schema diagram, etc.
+└── README.md — This file
+```
+---
 
-This is an **end-to-end Data Engineering project** for **UK Traffic Data** built using the  
-**Bronze → Silver → Gold** architecture with Python, SQL Server, and Power BI.
+## 🛠️ Tools & Technologies  
+
+| Tool / Technology | Purpose |
+|------------------|---------|
+| **Python**        | Data cleaning, transformation, and preprocessing of raw traffic data |
+| **T‑SQL / SQL Server** | Storage, schema creation, and modeling of processed data |
+| **Power BI**      | Reporting and visualization of cleaned, aggregated traffic data |
+| **Git & GitHub** | Version control, collaboration, and documentation management |
 
 ---
 
-## 🏗️ Architecture
+## 🔄 Project Workflow  
 
-Pipeline Flow:
-
-`Raw Data → Bronze Layer → Silver Layer → Gold Layer → Power BI`
-
-### 📌 Architecture Diagram 
-
-[![Architecture](Assets/Data%20Architecture.jpg)](Assets/Data%20Architecture.jpg)
-
-### 📌 Workflow Diagram 
-
-[![Workflow](Assets/Data%20Work%20Flow.jpg)](Assets/Data%20Work%20Flow.jpg)
+1. **Raw data ingestion** → collect raw traffic data files under `Data Sets/`.  
+2. **Data cleaning & normalization** → use Python scripts/notebooks under `Data Analysis/` to clean, dedupe, enforce data types, and prepare for loading.  
+3. **Schema design & data loading** → use the SQL scripts in `Data Warehouse/` to create star‑schema tables and load cleaned data.  
+4. **Reporting / Visualization** → connect the warehouse data to Power BI dashboards for analysis and insights.  
 
 ---
 
-## 🧱 Data Model (Silver Layer)
+## 📊 Data Model (Silver / Gold Layer)  
 
-| Table | Description | Key Column |
-|-------|-------------|------------|
-| Traffic | Fact table | Traffic_id |
-| Road | Road information | Road_id |
-| Region | UK regions | Region_id |
-| LocalAuthority | Local authority details | Local_authority_id |
-| Location | Coordinates | Location_id |
-| Date | Date dimension | Date_id |
+**Core tables and dimensions**:
 
----
+- `Traffic` — Fact table with traffic events (keyed by `Traffic_id`)  
+- `Road` — Road metadata (keyed by `Road_id`)  
+- `Region` — Region metadata (keyed by `Region_id`)  
+- `LocalAuthority` — Local authority metadata (keyed by `Local_authority_id`)  
+- `Location` — Geographic coordinates and location metadata (keyed by `Location_id`)  
+- `Date` — Date dimension for time‑based analysis (keyed by `Date_id`)  
 
-## 🔗 Relationships (Star Schema)
+Relationships:  
+- `Traffic.Road_id → Road.Road_id`  
+- `Traffic.Region_id → Region.Region_id`  
+- `Traffic.Local_authority_id → LocalAuthority.Local_authority_id`  
+- `Traffic.Location_id → Location.Location_id`  
+- `Traffic.Date_id → Date.Date_id`  
 
-| Foreign Key | References | Purpose |
-|-------------|------------|----------|
-| Traffic.Road_id | Road.Road_id | Road mapping |
-| Traffic.Region_id | Region.Region_id | Region mapping |
-| Traffic.Local_authority_id | LocalAuthority.Local_authority_id | Authority mapping |
-| Traffic.Location_id | Location.Location_id | Geo mapping |
-| Traffic.Date_id | Date.Date_id | Time dimension |
+This design enables efficient querying, time‑series analysis, and integration with BI tools.
 
 ---
 
-## 🧹 Data Cleaning Highlights
+## ✅ Data Cleaning Highlights  
 
-- Removed duplicates  
-- Added surrogate keys  
-- Validated datatypes  
-- Ensured FK relationships  
-- Prepared clean CSVs for SQL Server  
-
----
-
-## ⚙️ Tools and Technologies
-
-| Tool | Purpose |
-|------|----------|
-| Python | Data cleaning |
-| SQL Server | Storage + schema |
-| Power BI | Reporting |
-| GitHub | Versioning |
+- Duplicate records removed  
+- Added surrogate primary keys for dimension & fact tables  
+- Validated & standardized data types (dates, numeric, strings)  
+- Enforced referential integrity for all foreign‑key relationships  
+- Prepared clean CSVs ready for schema loading  
 
 ---
 
-## 🚀 Project Workflow
+## 📊 Visual Assets  
 
-1. Import raw data → Bronze  
-2. Clean + normalize → Silver  
-3. Load to SQL Server  
-4. Visualize in Power BI  
+You’ll find diagrams, workflow visuals, and star‑schema illustrations in `Assets.zip`. These provide an intuitive view of data flow, architecture, and entity relationships for better understanding and documentation.  
 
 ---
 
-## 📊 Star Schema Diagram
+## 🧠 Key Learnings & Takeaways  
 
-[![Star Schema](Assets/Star%20Schema.png)](Assets/Star%20Schema.png)
-
----
-
-## 📂 Scripts
-
-- **Cleaning Notebook:**  
-  [`Scripts/DEPI_Pro_Data_Cleaning_.ipynb`](Scripts/DEPI_Pro_Data_Cleaning_.ipynb)
-
-- **Data Insertion:**  
-  [`Scripts/Data Insertion`](Scripts/Data%20Insertion)
-
-- **SQL Schema Design:**  
-  [`Scripts/Schema Design .SQL`](Scripts/Schema%20Design%20.SQL)
+- How to build a multi‑layer data pipeline (Bronze → Silver → Gold) from raw data ingestion to analytics‑ready warehouse.  
+- Effective data cleaning and normalization techniques when dealing with real-world noisy traffic datasets.  
+- Star schema modeling and dimensional design for building BI‑ready data structures.  
+- End-to-end integration: ingestion → cleaning → modeling → visualization.  
 
 ---
 
-## 🖼 Assets
+## 👥 Contributors  
 
-- [`Assets/Data Architecture.jpg`](Assets/Data%20Architecture.jpg)  
-- [`Assets/Data Work Flow.jpg`](Assets/Data%20Work%20Flow.jpg)  
-- [`Assets/Star Schema.png`](Assets/Star%20Schema.png)
-
----
-
-## 🧠 Key Learnings
-
-- Multi-layer pipeline  
-- Handling large datasets  
-- Star schema modeling  
-- BI-ready data structure  
+| Name | Role / Responsibility |
+|------|-----------------------|
+| Osama Hegazy           | SQL & Data Cleaning  |  
+| Mohamed Nasr Aldin     | Data Cleaning         |  
+| Sherif Gamal           | SQL Modeling          |  
+| Ahmed Salama           | Power BI Reporting    |  
+| Zakaria Yehia          | Power BI Reporting    |  
+| Sara Hisham            | Power BI Reporting    |  
+| Yousef Ahmed           | Power BI Reporting    |  
 
 ---
 
-## 👥 Contributors
+## 🔮 Next Steps / Future Improvements  
 
-| Name | Role |
-|------|------|
-| Osama Hegazy | SQL + Cleaning |
-| Mohamed Nasr Aldin | Data cleaning |
-| Sherif Gmal | SQL modeling |
-| Ahmed Salama | Power BI |
-| Zakaria Yehia | Power BI |
-| Sara Hisham | Power BI |
-| Yousef Ahmed | Power BI |
+- Integrate workflow orchestration (e.g. add Apache Airflow or Azure Data Factory) to automate the pipeline.  
+- Enable incremental data refresh for continuous data updates.  
+- Add monitoring, logging, and alerting to track pipeline health & data quality over time.  
+- Potentially migrate to a cloud-based data warehouse or improve scalability.  
 
 ---
 
-## 🏁 Next Steps
+## 📄 License & Usage  
 
-- Add Airflow / ADF  
-- Add incremental refresh  
-- Add monitoring  
+This project is open for educational and demonstration purposes. Feel free to explore, fork, and adapt — but please attribute the original authors.
+
+---
+
+## 🔗 Contact  
+
+For questions, collaboration requests, or suggestions — open an issue or reach out via GitHub.  
+
+---
